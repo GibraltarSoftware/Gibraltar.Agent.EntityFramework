@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Internal\DatabaseMetric.cs" />
+    <Compile Include="Internal\MessageSourceProvider.cs" />
     <Compile Include="LoupeCommandInterceptor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

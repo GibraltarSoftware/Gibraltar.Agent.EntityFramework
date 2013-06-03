@@ -10,7 +10,7 @@ namespace Agent.EntityFramework.Test
         public static void AssemblyInitialize(TestContext context)
         {
             Log.StartSession();
-            var patch_only = System.Data.Entity.SqlServer.SqlProviderServices.Instance;
+            var patch_only = System.Data.Entity.SqlServer.SqlProviderServices.Instance;  //this is just here to force this particular provider into RAM since it's new to EF6
         }
 
         [AssemblyCleanup]
