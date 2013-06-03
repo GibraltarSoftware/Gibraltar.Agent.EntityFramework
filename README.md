@@ -14,10 +14,10 @@ one call to register it with Entity Framework.  The call can be made multiple ti
 (and without causing a dobule regsitration).  Once registered with Entity Framework it will
 automatically record information for every EF 6.0 context in the application domain.
 
-'''C#
+```C#
 //Register the Interceptor
 Gibraltar.Agent.EntityFramework.LoupeCommandInterceptor.Register();
-'''
+```
 
 
 Implementation Notes
