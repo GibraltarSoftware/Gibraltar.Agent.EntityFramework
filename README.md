@@ -1,19 +1,31 @@
-Loupe Agent for ASP.NET WebForms
+Loupe Agent for Entity Framework 6.0
 ===================
 
-This agent adds ASP.NET WebForms-specific monitoring features.  If you don't need
-to modify the source code just download the latest [Loupe Agent for ASP.NET](https://nuget.org/packages/Gibraltar.Agent.Web/).  
+This agent adds Entity Framework-specific monitoring features.  If you don't need
+to modify the source code just download the latest [Loupe Agent for Entity Framework](https://nuget.org/packages/Gibraltar.Agent.EntityFramework/).  
 It extends the [Loupe Agent](https://nuget.org/packages/Gibraltar.Agent/) so you can 
 use any viewer for Loupe to visualize network information.
+
+Using the Agent
+---------------
+
+To activate the agent it isn't enough to simply deploy it with your project, you need to make 
+one call to register it with Entity Framework.  The call can be made multiple times safely
+(and without causing a dobule regsitration).  Once registered with Entity Framework it will
+automatically record information for every EF 6.0 context in the application domain.
+
+'''C#
+//Register the Interceptor
+Gibraltar.Agent.EntityFramework.LoupeCommandInterceptor.Register();
+'''
 
 
 Implementation Notes
 --------------------
 
-Since Loupe supports .NET 2.0 and later and the WebForms capabilties are available
-in .NET 2.0 this agent targets .NET 2.0 as well.  Due to the built-in compatibility handling in the
-.NET runtime it can be used by any subsequent verison of .NET so there's no need for a .NET 4.0 or later
-version unless modifying to support something only available in .NET 4.0 or later.
+This extension works only with Entity Framework 6.0 Beta 2 and later because it relies on the
+new database command interception features built into EF 6.0.  It is compiled for .NET 4.0 but
+is compatible with both .NET 4.0 and .NET 4.5.
 
 
 Building the Agent
