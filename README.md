@@ -4,7 +4,7 @@ Loupe Agent for Entity Framework 6.0
 This agent adds Entity Framework-specific monitoring features.  If you don't need
 to modify the source code just download the latest [Loupe Agent for Entity Framework](https://nuget.org/packages/Gibraltar.Agent.EntityFramework/).  
 It extends the [Loupe Agent](https://nuget.org/packages/Gibraltar.Agent/) so you can 
-use any viewer for Loupe to visualize network information.
+use any viewer for Loupe to visualize network information
 
 Using the Agent
 ---------------
@@ -24,8 +24,11 @@ Implementation Notes
 --------------------
 
 This extension works only with Entity Framework 6.0 Beta 2 and later because it relies on the
-new database command interception features built into EF 6.0.  It is compiled for .NET 4.0 but
-is compatible with both .NET 4.0 and .NET 4.5.
+new database command interception features built into EF 6.0. Until Beta 2 is published
+you will need to pull the nightly builds for Entity Framework from here:
+http://entityframework.codeplex.com/wikipage?title=Nightly%20Builds
+
+It is compiled for .NET 4.0 but is compatible with both .NET 4.0 and .NET 4.5.
 
 
 Building the Agent

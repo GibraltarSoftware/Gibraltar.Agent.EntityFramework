@@ -11,7 +11,7 @@
     <AssemblyName>Gibraltar.Agent.EntityFramework</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-<!-- Signing is only done on the official build server
+    <!-- Signing is only done on the official build server
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\..\GibraltarSoftware.snk</AssemblyOriginatorKeyFile>
 -->
@@ -43,8 +43,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\EntityFramework.6.0.0-beta1-20528\lib\net40\EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="Gibraltar.Agent">
-      <HintPath>..\..\packages\Gibraltar.Agent.3.5.0.1482\lib\4.0\Gibraltar.Agent.dll</HintPath>
+    <Reference Include="Gibraltar.Agent, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ca42a1ee8d2e42d3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Gibraltar.Agent.3.5.2.1521\lib\4.0\Gibraltar.Agent.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
