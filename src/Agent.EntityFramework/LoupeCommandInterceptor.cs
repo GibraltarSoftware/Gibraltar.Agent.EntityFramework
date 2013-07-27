@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Infrastructure.Interception;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -59,7 +59,7 @@ namespace Gibraltar.Agent.EntityFramework
                     return;
 
                 s_IsRegistered = true;
-                Interception.AddInterceptor(new LoupeCommandInterceptor());
+                DbInterception.Add(new LoupeCommandInterceptor());
             }
         }
 
@@ -147,7 +147,6 @@ namespace Gibraltar.Agent.EntityFramework
         {
             StopTrackingCommand(command, interceptionContext, null);
         }
-
 
         private void StartTrackingContext(DbCommandInterceptionContext context)
         {
@@ -302,7 +301,7 @@ namespace Gibraltar.Agent.EntityFramework
             }
         }
 
-        private void StopTrackingCommand(DbCommand command, DbCommandInterceptionContext context, int? result)
+        private void StopTrackingCommand<T>(DbCommand command, DbCommandInterceptionContext<T> context, int? result)
         {
             string paramString = null;
 
