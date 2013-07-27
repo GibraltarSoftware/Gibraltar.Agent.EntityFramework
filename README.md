@@ -23,8 +23,8 @@ Gibraltar.Agent.EntityFramework.LoupeCommandInterceptor.Register();
 Implementation Notes
 --------------------
 
-This extension works only with Entity Framework 6.0 Beta 2 and later because it relies on the
-new database command interception features built into EF 6.0. Until Beta 2 is published
+This extension works only with Entity Framework 6.0 RC 1 Build 20726 and later because it relies on the
+new database command interception features built into EF 6.0. Until EF 6 RC is published
 you will need to pull the nightly builds for Entity Framework from here:
 http://entityframework.codeplex.com/wikipage?title=Nightly%20Builds
 
