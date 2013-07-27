@@ -27,6 +27,13 @@ namespace Agent.EntityFramework.Test
         [AssemblyInitialize]
         public static void AssemblyInitialize(TestContext context)
         {
+            Log.Initializing += (sender, args) =>
+                                    {
+                                        var publisherConfig = args.Configuration.Publisher;
+                                        publisherConfig.ProductName = "Loupe";
+                                        publisherConfig.ApplicationName = "Entity Framework Agent Tests";
+                                        publisherConfig.ApplicationType = ApplicationType.Console;
+                                    };
             Log.StartSession();
             var patch_only = System.Data.Entity.SqlServer.SqlProviderServices.Instance;  //this is just here to force this particular provider into RAM since it's new to EF6
         }

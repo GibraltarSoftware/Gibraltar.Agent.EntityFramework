@@ -12,8 +12,7 @@ namespace Agent.EntityFramework.Test.Entities
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
-    using System.Data.Objects;
-    using System.Data.Objects.DataClasses;
+    using System.Data.Entity.Core.Objects;
     using System.Linq;
     
     public partial class NorthwindEntities : DbContext
@@ -57,6 +56,45 @@ namespace Agent.EntityFramework.Test.Entities
         public DbSet<Sales_Totals_by_Amount> Sales_Totals_by_Amounts { get; set; }
         public DbSet<Summary_of_Sales_by_Quarter> Summary_of_Sales_by_Quarters { get; set; }
         public DbSet<Summary_of_Sales_by_Year> Summary_of_Sales_by_Years { get; set; }
-   
+    
+        public virtual ObjectResult<Customer_With_Recent_Orders_Result> Customer_With_Recent_Orders(string customerID)
+        {
+            var customerIDParameter = customerID != null ?
+                new ObjectParameter("CustomerID", customerID) :
+                new ObjectParameter("CustomerID", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Customer_With_Recent_Orders_Result>("Customer_With_Recent_Orders", customerIDParameter);
+        }
+    
+        public virtual ObjectResult<Employee_Sales_by_Country_Result> Employee_Sales_by_Country(Nullable<System.DateTime> beginning_Date, Nullable<System.DateTime> ending_Date)
+        {
+            var beginning_DateParameter = beginning_Date.HasValue ?
+                new ObjectParameter("Beginning_Date", beginning_Date) :
+                new ObjectParameter("Beginning_Date", typeof(System.DateTime));
+    
+            var ending_DateParameter = ending_Date.HasValue ?
+                new ObjectParameter("Ending_Date", ending_Date) :
+                new ObjectParameter("Ending_Date", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Employee_Sales_by_Country_Result>("Employee_Sales_by_Country", beginning_DateParameter, ending_DateParameter);
+        }
+    
+        public virtual ObjectResult<Sales_by_Year_Result> Sales_by_Year(Nullable<System.DateTime> beginning_Date, Nullable<System.DateTime> ending_Date)
+        {
+            var beginning_DateParameter = beginning_Date.HasValue ?
+                new ObjectParameter("Beginning_Date", beginning_Date) :
+                new ObjectParameter("Beginning_Date", typeof(System.DateTime));
+    
+            var ending_DateParameter = ending_Date.HasValue ?
+                new ObjectParameter("Ending_Date", ending_Date) :
+                new ObjectParameter("Ending_Date", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Sales_by_Year_Result>("Sales_by_Year", beginning_DateParameter, ending_DateParameter);
+        }
+    
+        public virtual ObjectResult<Ten_Most_Expensive_Products_Result> Ten_Most_Expensive_Products()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Ten_Most_Expensive_Products_Result>("Ten_Most_Expensive_Products");
+        }
     }
 }
