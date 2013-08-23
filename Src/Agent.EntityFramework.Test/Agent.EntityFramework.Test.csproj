@@ -45,7 +45,10 @@
     </Reference>
     <Reference Include="Gibraltar.Agent, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ca42a1ee8d2e42d3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Gibraltar.Agent.3.5.2.1521\lib\4.0\Gibraltar.Agent.dll</HintPath>
+      <HintPath>..\..\packages\Gibraltar.Agent.3.5.3.1533\lib\4.0\Gibraltar.Agent.dll</HintPath>
+    </Reference>
+    <Reference Include="Gibraltar.Packager.NET40">
+      <HintPath>..\..\packages\Gibraltar.Agent.3.5.3.1533\lib\4.0\Gibraltar.Packager.NET40.exe</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
