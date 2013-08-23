@@ -51,4 +51,4 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("3.5.2.0")]
-[assembly: AssemblyFileVersion("3.5.2.1521")] //releases are sych'ed up to Loupe build numbers
+[assembly: AssemblyFileVersion("3.5.3.1533")] //releases are sych'ed up to Loupe build numbers
