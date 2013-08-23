@@ -24,9 +24,8 @@ Implementation Notes
 --------------------
 
 This extension works only with Entity Framework 6.0 RC 1 and later because it relies on the
-new database command interception features built into EF 6.0. Until EF 6 RC is published
-you will need to pull the nightly builds for Entity Framework from here:
-http://entityframework.codeplex.com/wikipage?title=Nightly%20Builds
+new database command interception features built into EF 6.0. To download EF 6.0 RC 1 from
+NuGet.Org you will need to enable prerelease packages.
 
 It is compiled for .NET 4.0 but is compatible with both .NET 4.0 and .NET 4.5.
 
