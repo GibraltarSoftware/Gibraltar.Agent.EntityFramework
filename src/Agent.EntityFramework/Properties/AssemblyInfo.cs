@@ -50,5 +50,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.5.2.0")]
-[assembly: AssemblyFileVersion("3.5.3.1533")] //releases are sych'ed up to Loupe build numbers
+[assembly: AssemblyVersion("3.5.4.0")]
+[assembly: AssemblyFileVersion("3.5.4.1559")] //releases are sych'ed up to Loupe build numbers
