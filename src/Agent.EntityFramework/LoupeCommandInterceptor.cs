@@ -32,7 +32,7 @@ namespace Gibraltar.Agent.EntityFramework
     /// <summary>
     /// Records performance and diagnostic information for Entity Framework
     /// </summary>
-    public class LoupeCommandInterceptor : IDbCommandInterceptor
+    public class LoupeCommandInterceptor : IDbCommandInterceptor, IDbCommandTreeInterceptor
     {
         private const string LogSystem = "Gibraltar";
         private const string LogCategory = "Data Access.Query";
