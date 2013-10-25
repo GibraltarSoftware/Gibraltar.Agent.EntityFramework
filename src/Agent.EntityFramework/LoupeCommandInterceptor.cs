@@ -32,7 +32,7 @@ namespace Gibraltar.Agent.EntityFramework
     /// <summary>
     /// Records performance and diagnostic information for Entity Framework
     /// </summary>
-    public class LoupeCommandInterceptor : IDbCommandInterceptor, IDbCommandTreeInterceptor
+    public class LoupeCommandInterceptor : IDbCommandInterceptor
     {
         private const string LogSystem = "Gibraltar";
         private const string LogCategory = "Data Access.Query";
@@ -204,10 +204,11 @@ namespace Gibraltar.Agent.EntityFramework
             {
                 var messageBuilder = new StringBuilder(1024);
 
-                string caption;
+                string caption, shortenedQuery;
                 if (command.CommandType == CommandType.StoredProcedure)
                 {
-                    caption = string.Format("Executing '{0}'", command.CommandText);
+                    shortenedQuery = command.CommandText;
+                    caption = string.Format("Executing '{0}'", shortenedQuery);
                 }
                 else
                 {
@@ -230,13 +231,13 @@ namespace Gibraltar.Agent.EntityFramework
                     }
 
                     //and rejoin to make the shortened command.
-                    var shortenedCommand = string.Join(" ", cleanedUpLines);
-                    if (shortenedCommand.Length > 512)
+                    shortenedQuery = string.Join(" ", cleanedUpLines);
+                    if (shortenedQuery.Length > 512)
                     {
-                        shortenedCommand = shortenedCommand.Substring(0, 512) + "(...)";
+                        shortenedQuery = shortenedQuery.Substring(0, 512) + "(...)";
                         messageBuilder.AppendFormat("Full Query:\r\n\r\n{0}\r\n\r\n", command.CommandText);
                     }
-                    caption = string.Format("Executing Sql: '{0}'", shortenedCommand);
+                    caption = string.Format("Executing Sql: '{0}'", shortenedQuery);
                 }
 
                 string paramString = null;
@@ -254,7 +255,7 @@ namespace Gibraltar.Agent.EntityFramework
                     messageBuilder.AppendFormat("Parameters: {0}\r\n\r\n", paramString);
                 }
 
-                var trackingMetric = new DatabaseMetric(command.CommandText);
+                var trackingMetric = new DatabaseMetric(shortenedQuery, command.CommandText);
                 trackingMetric.Parameters = paramString;
 
                 if (command.Transaction != null)
@@ -330,8 +331,19 @@ namespace Gibraltar.Agent.EntityFramework
 
                 if (LogExceptions)
                 {
-                    Log.Warning(context.Exception, LogCategory, "Database Call failed due to " + context.Exception.GetType() + ": " + command.CommandText,
-                              "Parameters: {0}\r\n\r\nException: {1}", paramString ?? "(none)", context.Exception.Message);
+                    var shortenedCaption = (trackingMetric == null) ? command.CommandText : trackingMetric.ShortenedQuery;
+
+                    if (shortenedCaption.Length < command.CommandText.Length)
+                    {
+                        Log.Warning(context.Exception, LogCategory, "Database Call failed due to " + context.Exception.GetType() + ": " + shortenedCaption,
+                                  "Full Query:\r\n\r\n{0}\r\n\r\nParameters: {1}\r\n\r\nException: {2}", 
+                                  command.CommandText, paramString ?? "(none)", context.Exception.Message);
+                    }
+                    else
+                    {
+                        Log.Warning(context.Exception, LogCategory, "Database Call failed due to " + context.Exception.GetType() + ": " + shortenedCaption,
+                                  "Parameters: {0}\r\n\r\nException: {1}", paramString ?? "(none)", context.Exception.Message);
+                    }
                 }
             }
 

@@ -34,14 +34,20 @@ namespace Gibraltar.Agent.EntityFramework.Internal
         /// <summary>
         /// Create a new metric instance for the specified query
         /// </summary>
-        public DatabaseMetric(string query)
+        public DatabaseMetric(string shortenedQuery, string query)
         {
+            ShortenedQuery = shortenedQuery;
             Query = query;
             _stopWatch = Stopwatch.StartNew();
             //by default assume we're going to succeed - that way we don't have to explicitly add this
             //to every place we record a metric.
             Result = "Success";
         }
+
+        /// <summary>
+        /// The shortened down version we used for recording the caption on the starting side.
+        /// </summary>
+        public string ShortenedQuery { get; private set; }
 
         /// <summary>
         /// The name of the stored procedure or query that was executed
