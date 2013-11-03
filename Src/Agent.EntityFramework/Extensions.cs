@@ -11,14 +11,14 @@ namespace Gibraltar.Agent.EntityFramework
     /// </summary>
     public static class Extensions
     {
-        private const string DefaultLogCategory = "Data Access.Errors";
+        internal const string DefaultLogCategory = "Data Access";
 
         /// <summary>
         /// Log to Loupe the changes pending in the EF Context
         /// </summary>
         /// <param name="context">An entity framework DbContext</param>
         /// <param name="category">The category to log the changes under</param>
-        public static void LogChanges (this DbContext context, string category = DefaultLogCategory)
+        public static void LogChanges (this DbContext context, string category = DefaultLogCategory )
         {
             var description = new StringBuilder(1024);
 
@@ -133,7 +133,7 @@ namespace Gibraltar.Agent.EntityFramework
         /// </summary>
         /// <param name="ex">The entity validation exception to be recorded</param>
         /// <param name="category">The category to log the exception under</param>
-        public static void Log(this DbEntityValidationException ex, string category = DefaultLogCategory)
+        public static void Log(this DbEntityValidationException ex, string category = DefaultLogCategory + ".Errors")
         {
             var description = ex.Format();
             Gibraltar.Agent.Log.Error(ex, true, category, "Unable to save changes in entity framework context due to validation errors",

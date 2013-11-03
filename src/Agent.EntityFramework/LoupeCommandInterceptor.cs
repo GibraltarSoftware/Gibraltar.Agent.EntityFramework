@@ -35,7 +35,7 @@ namespace Gibraltar.Agent.EntityFramework
     public class LoupeCommandInterceptor : IDbCommandInterceptor
     {
         private const string LogSystem = "Gibraltar";
-        private const string LogCategory = "Data Access.Query";
+        private const string LogCategory = Extensions.DefaultLogCategory + ".Query";
 
         private static readonly object s_Lock = new object();
         private static bool s_IsRegistered = false; //PROTECTED BY LOCK
