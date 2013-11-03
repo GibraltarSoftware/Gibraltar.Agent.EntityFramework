@@ -43,5 +43,10 @@ namespace Agent.EntityFramework.Test
         {
             Log.EndSession();
         }
+
+        private void SeedDatabase()
+        {
+            
+        }
     }
 }

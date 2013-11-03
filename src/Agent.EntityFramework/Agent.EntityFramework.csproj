@@ -68,6 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions.cs" />
     <Compile Include="Internal\DatabaseMetric.cs" />
     <Compile Include="Internal\MessageSourceProvider.cs" />
     <Compile Include="LoupeCommandInterceptor.cs" />
