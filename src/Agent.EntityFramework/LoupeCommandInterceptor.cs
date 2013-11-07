@@ -208,7 +208,7 @@ namespace Gibraltar.Agent.EntityFramework
                 if (command.CommandType == CommandType.StoredProcedure)
                 {
                     shortenedQuery = command.CommandText;
-                    caption = string.Format("Executing '{0}'", shortenedQuery);
+                    caption = string.Format("Executing Procedure '{0}'", shortenedQuery);
                 }
                 else
                 {
@@ -243,16 +243,14 @@ namespace Gibraltar.Agent.EntityFramework
                 string paramString = null;
                 if (command.Parameters.Count > 0)
                 {
-                    var parameterValues = new List<string>();
-
+                    messageBuilder.AppendLine("Parameters:");
+ 
                     foreach (DbParameter parameter in command.Parameters)
                     {
-                        parameterValues.Add(string.Format("{0}='{1}'", parameter.ParameterName, parameter.Value));
+                        messageBuilder.AppendFormat("    {0}: {1}\r\n", parameter.ParameterName, parameter.Value.FormatDbValue());
                     }
 
-                    paramString = String.Join(", ", parameterValues.ToArray());
-
-                    messageBuilder.AppendFormat("Parameters: {0}\r\n\r\n", paramString);
+                    messageBuilder.AppendLine();
                 }
 
                 var trackingMetric = new DatabaseMetric(shortenedQuery, command.CommandText);

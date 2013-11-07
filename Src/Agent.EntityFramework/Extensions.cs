@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Net.Configuration;
@@ -117,7 +118,7 @@ namespace Gibraltar.Agent.EntityFramework
 
 			        foreach (var propertyName in currentValues.PropertyNames)
 			        {
-			            messageBuilder.AppendFormat("- {0}: \"{1}\"", propertyName, currentValues[propertyName] ?? "(null)");
+			            messageBuilder.AppendFormat("- {0}: \"{1}\"", propertyName, currentValues[propertyName].FormatDbValue());
 			        }
 			    }
 
@@ -138,6 +139,25 @@ namespace Gibraltar.Agent.EntityFramework
             var description = ex.Format();
             Gibraltar.Agent.Log.Error(ex, true, category, "Unable to save changes in entity framework context due to validation errors",
                 description);
+        }
+
+        /// <summary>
+        /// Create an optimal string form of the provided DB parameter value
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static string FormatDbValue(this object value)
+        {
+            if ((ReferenceEquals(value, null)) || (value == DBNull.Value))
+                return "(null)";
+
+            if (value is string)
+                return "'" + value + "'";
+
+            if ((value is DateTime) || (value is DateTimeOffset))
+                return string.Format("{0:G}", value);
+
+            return value.ToString();
         }
     }
 }
