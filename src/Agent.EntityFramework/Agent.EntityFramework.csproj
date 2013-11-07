@@ -54,9 +54,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\EntityFramework.6.0.1\lib\net40\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="Gibraltar.Agent, Version=3.5.4.0, Culture=neutral, PublicKeyToken=ca42a1ee8d2e42d3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Gibraltar.Agent.3.5.4.1566\lib\4.0\Gibraltar.Agent.dll</HintPath>
+    <Reference Include="Gibraltar.Agent">
+      <HintPath>..\..\packages\Gibraltar.Agent.3.5.4.1564\lib\4.0\Gibraltar.Agent.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
