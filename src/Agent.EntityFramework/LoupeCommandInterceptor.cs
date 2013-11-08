@@ -22,9 +22,9 @@ using System.Data;
 using System.Data.Common;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure.Interception;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Gibraltar.Agent.EntityFramework.Configuration;
 using Gibraltar.Agent.EntityFramework.Internal;
 
 namespace Gibraltar.Agent.EntityFramework
@@ -32,26 +32,67 @@ namespace Gibraltar.Agent.EntityFramework
     /// <summary>
     /// Records performance and diagnostic information for Entity Framework
     /// </summary>
+    /// <remarks>
+    /// 	<para>This class extends Entity Framework 6 and later to automatically capture details of each database operation performed along with performance metrics so you
+    /// can identify the most frequent, slowest, and most important queries.</para>
+    /// </remarks>
+    /// <example>
+    /// 	<para>To activate the agent it isn't enough to simply deploy it with your project, you need to make one call to register it with Entity Framework. The call can be
+    /// made multiple times safely (and without causing a double registration). Once registered with Entity Framework it will automatically record information for
+    /// every EF 6.0 context in the application domain.</para>
+    /// 	<code title="Registering the Interceptor" description="" lang="CS">
+    /// //To register the Interceptor with Entity Framework call this method at least once
+    /// Gibraltar.Agent.EntityFramework.LoupeCommandInterceptor.Register();
+    ///  
+    /// //You can choose to override the configuration from its defaults or the web.config
+    /// var config = new Gibraltar.Agent.EntityFramework.Configuration.EntityFrameworkElement();
+    /// config.LogCallStacks = true; //so you know what code is causing each operation
+    /// Gibraltar.Agent.EntityFramework.LoupeCommandInterceptor.Register(config);</code>
+    /// 	<code title="App.config configuration of the Agent" description="You can adjust the configuration of the agent, including disabling it, by merging the following with your application configuration file which adds the entityFramework configuration element." lang="XML">
+    /// &lt;?xml version="1.0" encoding="utf-8"?&gt;
+    /// &lt;configuration&gt;
+    ///   &lt;configSections&gt;
+    ///     &lt;sectionGroup name="gibraltar"&gt;
+    ///       &lt;section name="entityFramework" type="Gibraltar.Agent.EntityFramework.Configuration.EntityFrameworkElement, Gibraltar.Agent.EntityFramework" /&gt;
+    ///     &lt;/sectionGroup&gt;
+    ///   &lt;/configSections&gt;
+    ///   &lt;gibraltar&gt;
+    ///     &lt;!-- See the properties on the EntityFrameworkElement object for the options --&gt;
+    ///     &lt;entityFramework logCallStack="true" /&gt;
+    ///   &lt;/gibraltar&gt;
+    /// &lt;/configuration&gt;</code>
+    /// </example>
     public class LoupeCommandInterceptor : IDbCommandInterceptor
     {
         private const string LogSystem = "Gibraltar";
-        private const string LogCategory = Extensions.DefaultLogCategory + ".Query";
+        private const string LogCategory = EntityFrameworkElement.LogCategory + ".Query";
 
         private static readonly object s_Lock = new object();
         private static bool s_IsRegistered = false; //PROTECTED BY LOCK
         
-        private readonly Dictionary<int, DatabaseMetric> _databaseMetrics = new Dictionary<int, DatabaseMetric>(); 
+        private readonly Dictionary<int, DatabaseMetric> _databaseMetrics = new Dictionary<int, DatabaseMetric>();
 
-        private LoupeCommandInterceptor()
+        private readonly EntityFrameworkElement _configuration;
+
+        /// <summary>
+        /// Create a new Entity Framework command interceptor using the provided configuration settings
+        /// </summary>
+        /// <param name="configuration"></param>
+        private LoupeCommandInterceptor(EntityFrameworkElement configuration)
         {
-            IncludeCallStack = true;
-            LogExceptions = true;
+            if (configuration == null)
+                throw new ArgumentNullException("configuration");
+
+            _configuration = configuration;
+
+            LogCallStack = _configuration.LogCallStack;
+            LogExceptions = _configuration.LogExceptions;
         }
 
         /// <summary>
         /// Register the Loupe Command Interceptor with Entity Framework (safe to call multiple times)
         /// </summary>
-        public static void Register()
+        public static void Register(EntityFrameworkElement configuration = null)
         {
             lock(s_Lock)
             {
@@ -59,14 +100,18 @@ namespace Gibraltar.Agent.EntityFramework
                     return;
 
                 s_IsRegistered = true;
-                DbInterception.Add(new LoupeCommandInterceptor());
+
+                var effectiveConfiguration = configuration ?? EntityFrameworkElement.SafeLoad();
+
+                if (effectiveConfiguration.Enabled)
+                    DbInterception.Add(new LoupeCommandInterceptor(effectiveConfiguration));
             }
         }
 
         /// <summary>
         /// Indicates if the call stack to the operation should be included in the log message
         /// </summary>
-        public bool IncludeCallStack { get; set; }
+        public bool LogCallStack { get; set; }
 
         /// <summary>
         /// Indicates if execution exceptions should be logged
@@ -148,6 +193,10 @@ namespace Gibraltar.Agent.EntityFramework
             StopTrackingCommand(command, interceptionContext, null);
         }
 
+        /// <summary>
+        /// This method is unused at this time until we can determine a good way to detect the first moment we are working with a specific save changes sequence
+        /// </summary>
+        /// <param name="context"></param>
         private void StartTrackingContext(DbCommandInterceptionContext context)
         {
             foreach (var dbContext in context.DbContexts)
@@ -269,13 +318,13 @@ namespace Gibraltar.Agent.EntityFramework
                 }
 
                 var messageSourceProvider = new MessageSourceProvider(2); //It's a minimum of two frames to our caller.
-                if (IncludeCallStack)
+                if (LogCallStack)
                 {
                     messageBuilder.AppendFormat("Call Stack:\r\n{0}\r\n\r\n", messageSourceProvider.StackTrace);
                 }
 
 
-                Log.Write(LogMessageSeverity.Verbose, LogSystem, messageSourceProvider, null, null, LogWriteMode.Queued, null, LogCategory, caption,
+                Log.Write(_configuration.QueryMessageSeverity, LogSystem, messageSourceProvider, null, null, LogWriteMode.Queued, null, LogCategory, caption,
                           messageBuilder.ToString());
 
                 //we have to stuff the tracking metric in our index so that we can update it on the flipside.
@@ -333,13 +382,15 @@ namespace Gibraltar.Agent.EntityFramework
 
                     if (shortenedCaption.Length < command.CommandText.Length)
                     {
-                        Log.Warning(context.Exception, LogCategory, "Database Call failed due to " + context.Exception.GetType() + ": " + shortenedCaption,
+                        Log.Write(_configuration.ExceptionSeverity, LogSystem, 0, context.Exception, LogWriteMode.Queued, null, LogCategory, 
+                            "Database Call failed due to " + context.Exception.GetType() + ": " + shortenedCaption,
                                   "Full Query:\r\n\r\n{0}\r\n\r\nParameters: {1}\r\n\r\nException: {2}", 
                                   command.CommandText, paramString ?? "(none)", context.Exception.Message);
                     }
                     else
                     {
-                        Log.Warning(context.Exception, LogCategory, "Database Call failed due to " + context.Exception.GetType() + ": " + shortenedCaption,
+                        Log.Write(_configuration.ExceptionSeverity, LogSystem, 0, context.Exception, LogWriteMode.Queued, null, LogCategory,
+                            "Database Call failed due to " + context.Exception.GetType() + ": " + shortenedCaption,
                                   "Parameters: {0}\r\n\r\nException: {1}", paramString ?? "(none)", context.Exception.Message);
                     }
                 }

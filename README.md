@@ -11,7 +11,7 @@ Using the Agent
 
 To activate the agent it isn't enough to simply deploy it with your project, you need to make 
 one call to register it with Entity Framework.  The call can be made multiple times safely
-(and without causing a dobule regsitration).  Once registered with Entity Framework it will
+(and without causing a double registration).  Once registered with Entity Framework it will
 automatically record information for every EF 6.0 context in the application domain.
 
 ```C#
