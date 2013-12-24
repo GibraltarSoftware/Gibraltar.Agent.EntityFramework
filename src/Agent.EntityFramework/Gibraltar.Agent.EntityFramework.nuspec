@@ -2,12 +2,12 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Gibraltar.Agent.EntityFramework</id>
-    <version>3.5.4.1559-rc1</version>
+    <version>3.5.4.1570</version>
     <title>Gibraltar Loupe Agent for Entity Framework 6</title>
     <authors>Gibraltar Software</authors>
     <owners>Gibraltar Software</owners>
-    <licenseUrl>http://www.gibraltarsoftware.com/Support/Documentation.aspx?Page=Reference_GibraltarAgentLicense.html</licenseUrl>
-    <projectUrl>http://www.gibraltarsoftware.com</projectUrl>
+    <licenseUrl>https://github.com/GibraltarSoftware/Gibraltar.Agent.EntityFramework/blob/master/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/GibraltarSoftware/Gibraltar.Agent.EntityFramework</projectUrl>
     <iconUrl>http://www.gibraltarsoftware.com/loupe.ico</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Records performance and tracing information for EF interactions while your application runs.  Designed for use in a production environment, it extends the Loupe Agent with features specific to Entity Framework (6 and later) and works with any EF provider.</description>
