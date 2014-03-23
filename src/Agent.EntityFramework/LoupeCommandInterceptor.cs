@@ -17,6 +17,7 @@
 // */
 #endregion
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -69,8 +70,8 @@ namespace Gibraltar.Agent.EntityFramework
 
         private static readonly object s_Lock = new object();
         private static bool s_IsRegistered = false; //PROTECTED BY LOCK
-        
-        private readonly Dictionary<int, DatabaseMetric> _databaseMetrics = new Dictionary<int, DatabaseMetric>();
+
+        private readonly ConcurrentDictionary<int, DatabaseMetric> _databaseMetrics = new ConcurrentDictionary<int, DatabaseMetric>();
 
         private readonly EntityFrameworkElement _configuration;
 
@@ -355,7 +356,7 @@ namespace Gibraltar.Agent.EntityFramework
 
             //see if we have a tracking metric for this command...
             DatabaseMetric trackingMetric;
-            _databaseMetrics.TryGetValue(command.GetHashCode(), out trackingMetric);
+            _databaseMetrics.TryRemove(command.GetHashCode(), out trackingMetric);
             if (trackingMetric != null)
             {
                 trackingMetric.Stop();
@@ -365,8 +366,6 @@ namespace Gibraltar.Agent.EntityFramework
                 {
                     trackingMetric.Result = result.ToString();
                 }
-
-                _databaseMetrics.Remove(command.GetHashCode());
             }
 
             if (context.Exception != null)
