@@ -295,10 +295,16 @@ namespace Gibraltar.Agent.EntityFramework
                 {
                     messageBuilder.AppendLine("Parameters:");
  
+                    var paramStringBuilder = new StringBuilder(1024);
                     foreach (DbParameter parameter in command.Parameters)
                     {
-                        messageBuilder.AppendFormat("    {0}: {1}\r\n", parameter.ParameterName, parameter.Value.FormatDbValue());
+                        string value = parameter.Value.FormatDbValue();
+                        messageBuilder.AppendFormat("    {0}: {1}\r\n", parameter.ParameterName, value);
+                        paramStringBuilder.AppendFormat("{0}: {1}, ", parameter.ParameterName, value);
                     }
+
+                    paramString = paramStringBuilder.ToString();
+                    paramString = paramString.Substring(0, paramString.Length - 2); //get rid of the trailing comma
 
                     messageBuilder.AppendLine();
                 }
@@ -365,7 +371,7 @@ namespace Gibraltar.Agent.EntityFramework
 
                 if (result != null)
                 {
-                    trackingMetric.Result = result.ToString();
+                    trackingMetric.Rows = result.Value;
                 }
             }
 
