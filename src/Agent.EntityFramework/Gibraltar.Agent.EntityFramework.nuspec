@@ -2,7 +2,6 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Gibraltar.Agent.EntityFramework</id>
-    <version>3.5.4.1570</version>
     <title>Gibraltar Loupe Agent for Entity Framework 6</title>
     <authors>Gibraltar Software</authors>
     <owners>Gibraltar Software</owners>
