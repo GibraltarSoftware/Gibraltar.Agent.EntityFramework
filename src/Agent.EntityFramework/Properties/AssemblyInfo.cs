@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Gibraltar Software Inc.")]
 [assembly: AssemblyProduct("Gibraltar.Agent.EntityFramework")]
-[assembly: AssemblyCopyright("Copyright © 2013 - 2014 Gibraltar Software Inc.")]
+[assembly: AssemblyCopyright("Copyright © 2013-2014 Gibraltar Software Inc.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,4 +51,4 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("3.5.4.0")]
-[assembly: AssemblyFileVersion("3.5.6.1696")] //releases are sych'ed up to Loupe build numbers
+[assembly: AssemblyFileVersion("3.6.0.1923")] //releases are sych'ed up to Loupe build numbers

@@ -65,6 +65,20 @@ namespace Gibraltar.Agent.EntityFramework.Internal
         public string Parameters { get; set; }
 
         /// <summary>
+        /// The server the operation was run against
+        /// </summary>
+        [EventMetricValue("server", SummaryFunction.Count, null, Caption = "Server",
+            Description = "The server the operation was run against")]
+        public string Server { get; set; }
+
+        /// <summary>
+        /// The database the operation was run against
+        /// </summary>
+        [EventMetricValue("database", SummaryFunction.Count, null, Caption = "Database",
+            Description = "The database the operation was run against")]
+        public string Database { get; set; }
+
+        /// <summary>
         /// The number of rows returned by the query
         /// </summary>
         [EventMetricValue("rowCount", SummaryFunction.Average, null, Caption = "Rows",

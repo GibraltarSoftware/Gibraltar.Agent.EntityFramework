@@ -295,10 +295,16 @@ namespace Gibraltar.Agent.EntityFramework
                 {
                     messageBuilder.AppendLine("Parameters:");
  
+                    var paramStringBuilder = new StringBuilder(1024);
                     foreach (DbParameter parameter in command.Parameters)
                     {
-                        messageBuilder.AppendFormat("    {0}: {1}\r\n", parameter.ParameterName, parameter.Value.FormatDbValue());
+                        string value = parameter.Value.FormatDbValue();
+                        messageBuilder.AppendFormat("    {0}: {1}\r\n", parameter.ParameterName, value);
+                        paramStringBuilder.AppendFormat("{0}: {1}, ", parameter.ParameterName, value);
                     }
+
+                    paramString = paramStringBuilder.ToString();
+                    paramString = paramString.Substring(0, paramString.Length - 2); //get rid of the trailing comma
 
                     messageBuilder.AppendLine();
                 }
@@ -314,8 +320,10 @@ namespace Gibraltar.Agent.EntityFramework
                 var connection = command.Connection;
                 if (connection != null)
                 {
-                    messageBuilder.AppendFormat("Server:\r\n    DataSource: {3}\r\n    Command Timeout: {2:N0} Seconds\r\n    Provider: {0}\r\n    Server Version: {1}\r\n\r\n",
-                                                connection.GetType(), connection.ServerVersion, connection.ConnectionTimeout, connection.DataSource);
+                    trackingMetric.Server = connection.DataSource;
+                    trackingMetric.Database = connection.Database;
+                    messageBuilder.AppendFormat("Server:\r\n    DataSource: {3}\r\n    Database: {4}\r\n    Connection Timeout: {2:N0} Seconds\r\n    Provider: {0}\r\n    Server Version: {1}\r\n\r\n",
+                                                connection.GetType(), connection.ServerVersion, connection.ConnectionTimeout, connection.DataSource, connection.Database);
                 }
 
                 var messageSourceProvider = new MessageSourceProvider(2); //It's a minimum of two frames to our caller.
@@ -323,7 +331,6 @@ namespace Gibraltar.Agent.EntityFramework
                 {
                     messageBuilder.AppendFormat("Call Stack:\r\n{0}\r\n\r\n", messageSourceProvider.StackTrace);
                 }
-
 
                 Log.Write(_configuration.QueryMessageSeverity, LogSystem, messageSourceProvider, null, null, LogWriteMode.Queued, null, LogCategory, caption,
                           messageBuilder.ToString());
@@ -364,7 +371,7 @@ namespace Gibraltar.Agent.EntityFramework
 
                 if (result != null)
                 {
-                    trackingMetric.Result = result.ToString();
+                    trackingMetric.Rows = result.Value;
                 }
             }
 
@@ -378,19 +385,27 @@ namespace Gibraltar.Agent.EntityFramework
                 if (LogExceptions)
                 {
                     var shortenedCaption = (trackingMetric == null) ? command.CommandText : trackingMetric.ShortenedQuery;
+                    var server = (trackingMetric == null) ? (command.Connection == null) ? "(unknown)" : command.Connection.DataSource
+                                     : trackingMetric.Server;
+
+                    var database = (trackingMetric == null) ? (command.Connection == null) ? "(unknown)" : command.Connection.Database
+                                     : trackingMetric.Database;
+
+
 
                     if (shortenedCaption.Length < command.CommandText.Length)
                     {
                         Log.Write(_configuration.ExceptionSeverity, LogSystem, 0, context.Exception, LogWriteMode.Queued, null, LogCategory, 
                             "Database Call failed due to " + context.Exception.GetType() + ": " + shortenedCaption,
-                                  "Full Query:\r\n\r\n{0}\r\n\r\nParameters: {1}\r\n\r\nException: {2}", 
-                                  command.CommandText, paramString ?? "(none)", context.Exception.Message);
+                                  "Exception: {2}\r\n\r\nFull Query:\r\n\r\n{0}\r\n\r\nParameters: {1}\r\n\r\nServer:\r\n    DataSource: {3}\r\n    Database: {4}\r\n",
+                                  command.CommandText, paramString ?? "(none)", context.Exception.Message, server, database);
                     }
                     else
                     {
                         Log.Write(_configuration.ExceptionSeverity, LogSystem, 0, context.Exception, LogWriteMode.Queued, null, LogCategory,
                             "Database Call failed due to " + context.Exception.GetType() + ": " + shortenedCaption,
-                                  "Parameters: {0}\r\n\r\nException: {1}", paramString ?? "(none)", context.Exception.Message);
+                                  "Exception: {1}\r\n\r\nParameters: {0}\r\n\r\nServer:\r\n    DataSource: {3}\r\n    Database: {4}\r\n",
+                                  paramString ?? "(none)", context.Exception.Message, server, database);
                     }
                 }
             }
