@@ -404,7 +404,7 @@ namespace Gibraltar.Agent.EntityFramework
                     {
                         Log.Write(_configuration.ExceptionSeverity, LogSystem, 0, context.Exception, LogWriteMode.Queued, null, LogCategory,
                             "Database Call failed due to " + context.Exception.GetType() + ": " + shortenedCaption,
-                                  "Exception: {1}\r\n\r\nParameters: {0}\r\n\r\nServer:\r\n    DataSource: {3}\r\n    Database: {4}\r\n",
+                                  "Exception: {1}\r\n\r\nParameters: {0}\r\n\r\nServer:\r\n    DataSource: {2}\r\n    Database: {3}\r\n",
                                   paramString ?? "(none)", context.Exception.Message, server, database);
                     }
                 }
