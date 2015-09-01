@@ -185,7 +185,7 @@ namespace Gibraltar.Agent.EntityFramework.Internal
                     }
                 }
 
-                //so we can do deferred stack trace calculation we need to store off the stack trace info we alraedy calculated and what index we are on.
+                //so we can do deferred stack trace calculation we need to store off the stack trace info we already calculated and what index we are on.
                 _selectedStackFrame = frameIndex;
 
                 method = (frame == null) ? null : frame.GetMethod(); // Make sure these are in sync!

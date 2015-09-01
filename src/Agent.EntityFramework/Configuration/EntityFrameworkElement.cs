@@ -65,7 +65,7 @@ namespace Gibraltar.Agent.EntityFramework.Configuration
         public LogMessageSeverity ExceptionSeverity { get { return (LogMessageSeverity)this["exceptionSeverity"]; } set { this["exceptionSeverity"] = value; } }
 
         /// <summary>
-        /// Load the elemnt from the system configuration file, falling back to defaults if it can't be parsed
+        /// Load the element from the system configuration file, falling back to defaults if it can't be parsed
         /// </summary>
         /// <returns>A new element object</returns>
         internal static EntityFrameworkElement SafeLoad()
@@ -79,7 +79,7 @@ namespace Gibraltar.Agent.EntityFramework.Configuration
             catch (Exception ex)
             {
                 Log.Error(ex, LogCategory + ".Agent", "Unable to load the MVC Agent configuration from the config file",
-                          "The default configuration will be used which will no doubtedly create unexpected behavior.  Exception:\r\n{0}", ex.Message);
+                          "The default configuration will be used which will undoubtedly create unexpected behavior.  Exception:\r\n{0}", ex.Message);
             }
 
             return configuration ?? new EntityFrameworkElement();
