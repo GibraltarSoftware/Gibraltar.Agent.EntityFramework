@@ -16,11 +16,10 @@
 //    limitations under the License.
 // */
 #endregion
-using System;
+
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace Gibraltar.Agent.EntityFramework.Internal
 {
@@ -38,7 +37,6 @@ namespace Gibraltar.Agent.EntityFramework.Internal
         private string _className;
         private string _fileName;
         private int _lineNumber;
-        private int _selectedStackFrame;
         private string _formattedStackTrace;
 
         /// <summary>
@@ -102,8 +100,8 @@ namespace Gibraltar.Agent.EntityFramework.Internal
                     {
                         try
                         {
-                            //we are one stack frame higher than FindMessageSource.
-                            _formattedStackTrace = new StackTrace(_selectedStackFrame + 1, true).ToString();
+                            //If we didn't get it, just go with using our caller.
+                            _formattedStackTrace = new StackTrace(1, true).ToString();
                         }
                         catch
                         {
@@ -130,20 +128,19 @@ namespace Gibraltar.Agent.EntityFramework.Internal
         {
             try
             {
-                var stackTrace = new StackTrace(skipFrames, true);
+                var stackTrace = new StackTrace(skipFrames + 1, true);
                 StackFrame frame = null;
-                MethodBase method;
-                String frameNamespace;
-               
-                // We use skipFrames+1 here so that callers can pass in 0 to designate themselves,
-                // rather than have to know to start with 1.
-                int frameIndex = skipFrames + 1; // Start with the most likely candidate.
+                MethodBase method = null;
+                var selectedFrameIndex = 0;
+
+                var frameIndex = 0; // we already accounted for skipFrames in getting the stackTrace
                 while (true)
                 {
                     //careful:  We may be out of frames, in which case we're going to stop, hopefully without an exception.
                     try
                     {
                         frame = stackTrace.GetFrame(frameIndex);
+                        selectedFrameIndex = frameIndex;
                         frameIndex++; // Do this here so any continue statement added below in this loop will be okay.
 
                         method = frame.GetMethod(); // This should be safe, constructors can't return null.
@@ -151,11 +148,10 @@ namespace Gibraltar.Agent.EntityFramework.Internal
                         {
                             break; // We're presumably off the end of the stack, bail out of the loop!
                         }
-                        frameNamespace = (method.DeclaringType == null) ? null : method.DeclaringType.FullName;
+                        var frameNamespace = (method.DeclaringType == null) ? null : method.DeclaringType.FullName;
 
                         if (frameNamespace != null &&
                             frameNamespace.StartsWith("System.") == false &&
-                            frameNamespace.StartsWith("PostSharp.") == false &&
                             frameNamespace.StartsWith("Gibraltar.") == false)
                         {
                             // This is the first frame outside of this adapter and the logging framework itself.
@@ -171,9 +167,11 @@ namespace Gibraltar.Agent.EntityFramework.Internal
                         DebugBreak(); // Stop the debugger here (if it's running, otherwise we won't alert on it).
 
                         // Well, whatever we found - that's where we are.  We have to give up our search.
+                        selectedFrameIndex = 0;
                         break;
                     }
 
+                    method = null; // Invalidate it for the next loop.
 
                     // Remember, frameIndex was already incremented near the top of the loop
                     if (frameIndex > 200) // Note: We're assuming stacks can never be this deep (without finding our target)
@@ -181,13 +179,19 @@ namespace Gibraltar.Agent.EntityFramework.Internal
                         // Maybe we messed up our failure-detection, so to prevent an infinite loop from hanging the application...
                         DebugBreak(); // Stop the debugger here (if it's running).  This shouldn't ever be hit.
 
+                        selectedFrameIndex = 0;
                         break; // Okay, it's just not sensible for stack to be so deep, so let's give up.
                     }
                 }
 
-                //so we can do deferred stack trace calculation we need to store off the stack trace info we alraedy calculated and what index we are on.
-                _selectedStackFrame = frameIndex;
+                if (frame == null || method == null)
+                {
+                    frame = stackTrace.GetFrame(0); // If we went off the end, go back to the first frame (after skipFrames).
+                    selectedFrameIndex = 0;
+                }
 
+                //now store off the whole formatted remainder of the stack, including our selected frame.
+                _formattedStackTrace = new StackTrace(selectedFrameIndex + skipFrames + 1, true).ToString();
                 method = (frame == null) ? null : frame.GetMethod(); // Make sure these are in sync!
 
                 // Now that we've selected the best possible frame, we need to make sure we really found one.
@@ -245,7 +249,6 @@ namespace Gibraltar.Agent.EntityFramework.Internal
                 _lineNumber = 0;
             }
         }
-
         /// <summary>
         /// Automatically stop debugger like a breakpoint, if enabled.
         /// </summary>
