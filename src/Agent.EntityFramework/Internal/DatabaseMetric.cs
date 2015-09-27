@@ -100,6 +100,11 @@ namespace Gibraltar.Agent.EntityFramework.Internal
         public string Result { get; set; }
 
         /// <summary>
+        /// The message source provider for this call.
+        /// </summary>
+        internal IMessageSourceProvider MessageSourceProvider { get; set; }
+
+        /// <summary>
         /// Stops the timer but doesn't record the metric yet.
         /// </summary>
         public void Stop()

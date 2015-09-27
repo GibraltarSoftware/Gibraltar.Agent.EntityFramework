@@ -335,6 +335,8 @@ namespace Gibraltar.Agent.EntityFramework
                 Log.Write(_configuration.QueryMessageSeverity, LogSystem, messageSourceProvider, null, null, LogWriteMode.Queued, null, LogCategory, caption,
                           messageBuilder.ToString());
 
+                trackingMetric.MessageSourceProvider = messageSourceProvider;
+
                 //we have to stuff the tracking metric in our index so that we can update it on the flipside.
                 try
                 {
@@ -391,18 +393,18 @@ namespace Gibraltar.Agent.EntityFramework
                     var database = (trackingMetric == null) ? (command.Connection == null) ? "(unknown)" : command.Connection.Database
                                      : trackingMetric.Database;
 
-
+                    var messageSourceProvider = (trackingMetric == null) ? new MessageSourceProvider(2) : trackingMetric.MessageSourceProvider; 
 
                     if (shortenedCaption.Length < command.CommandText.Length)
                     {
-                        Log.Write(_configuration.ExceptionSeverity, LogSystem, 0, context.Exception, LogWriteMode.Queued, null, LogCategory, 
+                        Log.Write(_configuration.ExceptionSeverity, LogSystem, messageSourceProvider, null, context.Exception, LogWriteMode.Queued, null, LogCategory, 
                             "Database Call failed due to " + context.Exception.GetType() + ": " + shortenedCaption,
                                   "Exception: {2}\r\n\r\nFull Query:\r\n\r\n{0}\r\n\r\nParameters: {1}\r\n\r\nServer:\r\n    DataSource: {3}\r\n    Database: {4}\r\n",
                                   command.CommandText, paramString ?? "(none)", context.Exception.Message, server, database);
                     }
                     else
                     {
-                        Log.Write(_configuration.ExceptionSeverity, LogSystem, 0, context.Exception, LogWriteMode.Queued, null, LogCategory,
+                        Log.Write(_configuration.ExceptionSeverity, LogSystem, messageSourceProvider, null, context.Exception, LogWriteMode.Queued, null, LogCategory,
                             "Database Call failed due to " + context.Exception.GetType() + ": " + shortenedCaption,
                                   "Exception: {1}\r\n\r\nParameters: {0}\r\n\r\nServer:\r\n    DataSource: {2}\r\n    Database: {3}\r\n",
                                   paramString ?? "(none)", context.Exception.Message, server, database);
