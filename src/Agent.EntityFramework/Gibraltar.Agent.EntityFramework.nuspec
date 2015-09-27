@@ -2,10 +2,11 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Gibraltar.Agent.EntityFramework</id>
-    <title>Gibraltar Loupe Agent for Entity Framework 6</title>
+    <version>$version$</version> 
+    <title>Loupe Agent for Entity Framework 6</title>
     <authors>Gibraltar Software</authors>
     <owners>Gibraltar Software</owners>
-    <version>3.7.0.2102</version> 
+    <copyright>Copyright © 2008-2015 Gibraltar Software, Inc.</copyright>
     <licenseUrl>https://github.com/GibraltarSoftware/Gibraltar.Agent.EntityFramework/blob/master/LICENSE.txt</licenseUrl>
     <projectUrl>https://github.com/GibraltarSoftware/Gibraltar.Agent.EntityFramework</projectUrl>
     <iconUrl>http://www.gibraltarsoftware.com/loupe.ico</iconUrl>
