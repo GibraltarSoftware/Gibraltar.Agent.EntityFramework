@@ -143,7 +143,7 @@ namespace Gibraltar.Agent.EntityFramework.Internal
                         selectedFrameIndex = frameIndex;
                         frameIndex++; // Do this here so any continue statement added below in this loop will be okay.
 
-                        method = frame.GetMethod(); // This should be safe, constructors can't return null.
+                        method = frame?.GetMethod();
                         if (method == null) // But the method we found might be null (if the frame is invalid?)
                         {
                             break; // We're presumably off the end of the stack, bail out of the loop!
@@ -192,7 +192,7 @@ namespace Gibraltar.Agent.EntityFramework.Internal
 
                 //now store off the whole formatted remainder of the stack, including our selected frame.
                 _formattedStackTrace = new StackTrace(selectedFrameIndex + skipFrames + 1, true).ToString();
-                method = (frame == null) ? null : frame.GetMethod(); // Make sure these are in sync!
+                method = frame?.GetMethod(); // Make sure these are in sync!
 
                 // Now that we've selected the best possible frame, we need to make sure we really found one.
                 if (method == null)

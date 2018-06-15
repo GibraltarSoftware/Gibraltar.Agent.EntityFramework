@@ -18,6 +18,7 @@
 #endregion
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Agent.EntityFramework.Test.Entities;
 using Gibraltar.Agent;
 using Gibraltar.Agent.EntityFramework;
@@ -63,6 +64,32 @@ namespace Agent.EntityFramework.Test
             }
         }
 
+        [TestMethod]
+        public async Task AsyncSimpleUpdate()
+        {
+            try
+            {
+                using (var ctx = new NorthwindEntities())
+                {
+                    var newCustomer = ctx.Customers.Add(new Customer());
+                    newCustomer.Address = "Address Line 1";
+                    newCustomer.City = "Springfield";
+                    newCustomer.CustomerID = "AE" + ctx.Customers.Count();
+                    newCustomer.CompanyName = "Our Company" + ctx.Customers.Count();
+                    newCustomer.ContactName = "John Doe";
+                    newCustomer.ContactTitle = "Senior Manager";
+                    newCustomer.Region = "midwest";
+                    newCustomer.PostalCode = "50501";
+
+                    await ctx.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.RecordException(ex, LogCategory, true);
+                throw; //we want to be sure we fail the unit test.
+            }
+        }
         [TestMethod]
         public void TransactionalUpdate()
         {
