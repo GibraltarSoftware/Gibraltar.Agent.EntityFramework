@@ -6,7 +6,7 @@
     <title>Loupe Agent for Entity Framework 6</title>
     <authors>Gibraltar Software</authors>
     <owners>Gibraltar Software</owners>
-    <copyright>Copyright © 2008-2015 Gibraltar Software, Inc.</copyright>
+    <copyright>Copyright © 2008-2023 Gibraltar Software, Inc.</copyright>
     <licenseUrl>https://github.com/GibraltarSoftware/Gibraltar.Agent.EntityFramework/blob/master/LICENSE.txt</licenseUrl>
     <projectUrl>https://github.com/GibraltarSoftware/Gibraltar.Agent.EntityFramework</projectUrl>
     <iconUrl>http://www.gibraltarsoftware.com/loupe.ico</iconUrl>
