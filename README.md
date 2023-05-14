@@ -1,5 +1,8 @@
-Loupe Agent for Entity Framework 6.0
+Loupe Agent for Entity Framework 6.0 (Moved to Gibraltar.Agent)
 ===================
+
+**This repository has been merged with the [Gibraltar.Agent](https://github.com/GibraltarSoftware/Gibfraltar.Agent)
+Repository and is now maintained there.**
 
 This agent adds Entity Framework-specific monitoring features.  If you don't need
 to modify the source code just download the latest [Loupe Agent for Entity Framework](https://nuget.org/packages/Gibraltar.Agent.EntityFramework/).  
